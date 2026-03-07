@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F172A">
+<title>Bence-10 Score</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#F0F2F5;color:#111827;padding-bottom:90px;-webkit-font-smoothing:antialiased}
+
+.hdr{background:#0F172A;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.hdr-l{display:flex;align-items:center;gap:8px}
+.hdr-mk{width:28px;height:28px;background:linear-gradient(135deg,#0D9488,#2DD4BF);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:12px}
+.hdr-tx{color:#fff;font-size:15px;font-weight:700}
+.hdr-tx b{color:#0D9488}
+.hdr-r{display:flex;align-items:center;gap:6px}
+.hdr-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#8B5CF6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700}
+.hdr-nm{color:rgba(255,255,255,.6);font-size:11px}
+
+.wrap{padding:14px 16px}
+
+.sc{background:#fff;border:1px solid #E5E7EB;border-radius:16px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,.05);margin-bottom:14px}
+.scr{position:relative;width:64px;height:64px;flex-shrink:0}
+.scr svg{transform:rotate(-90deg);width:64px;height:64px}
+.scr .bg2{fill:none;stroke:#F3F4F6;stroke-width:6}
+.scr .fg2{fill:none;stroke:#10B981;stroke-width:6;stroke-linecap:round;stroke-dasharray:163;stroke-dashoffset:163;transition:all .5s ease}
+.scr .vl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800}
+.sinf{flex:1}
+.sinf .lb{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF}
+.sinf .rk{font-size:16px;font-weight:700;margin-top:2px}
+.scg{width:44px;height:44px;border-radius:12px;border:1px solid #E5E7EB;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.scg svg{width:20px;height:20px;color:#4B5563}
+
+.sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:#9CA3AF;padding:12px 4px 8px;display:flex;justify-content:space-between}
+
+/* ─── CHECKBOX TOGGLE CARDS ─── */
+/* Hide native checkbox */
+.tc-cb{position:absolute;opacity:0;pointer-events:none;width:0;height:0}
+
+/* Label IS the card */
+.tc{background:#fff;border:2px solid #E5E7EB;border-radius:14px;padding:16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;-webkit-user-select:none;min-height:64px;transition:all .15s}
+.tc:active{transform:scale(.98)}
+
+/* Checked state via CSS — works without JS */
+.tc-cb:checked + .tc{border-color:#0D9488;background:#F0FAF7}
+.tc .ix{width:28px;height:28px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#9CA3AF;flex-shrink:0;transition:.2s}
+.tc-cb:checked + .tc .ix{background:#0D9488;color:#fff}
+.tc .bd2{flex:1;min-width:0}
+.tc .nm{font-size:14px;font-weight:600}
+.tc .su{font-size:11px;color:#9CA3AF;margin-top:2px}
+.tc .pt{font-size:18px;font-weight:800;color:#0D9488;opacity:0;transition:.2s;flex-shrink:0;min-width:28px;text-align:center}
+.tc-cb:checked + .tc .pt{opacity:1}
+.tc .sw{width:48px;height:28px;border-radius:100px;background:#D1D5DB;position:relative;flex-shrink:0;transition:.2s}
+.tc-cb:checked + .tc .sw{background:#0D9488}
+.tc .sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:.2s}
+.tc-cb:checked + .tc .sw::after{transform:translateX(20px)}
+
+/* Status text swap via CSS */
+.tc .cr-on{display:none}
+.tc .cr-off{display:inline}
+.tc-cb:checked + .tc .cr-on{display:inline}
+.tc-cb:checked + .tc .cr-off{display:none}
+
+/* Select cards */
+.sk{background:#fff;border:2px solid #E5E7EB;border-radius:14px;padding:14px 16px;margin-bottom:8px}
+.sk-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sk-ix{width:28px;height:28px;border-radius:8px;background:#F3F4F6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#9CA3AF;flex-shrink:0}
+.sk-nm{font-size:14px;font-weight:600;flex:1}
+.sk-pt{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:#F3F4F6;color:#9CA3AF;transition:.2s;flex-shrink:0}
+.sk-pt.on{background:#0D9488;color:#fff}
+.sk-sub{font-size:10px;color:#9CA3AF;margin-bottom:6px;padding-left:38px}
+.sk select{width:100%;font-family:inherit;font-size:14px;font-weight:500;color:#111827;border:2px solid #E5E7EB;border-radius:10px;padding:12px;background:#FAFBFC;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%239CA3AF' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 6l3.5 4 3.5-4z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;min-height:48px}
+
+/* Interp */
+.ist{background:#fff;border:2px solid #E5E7EB;border-radius:14px;padding:14px 16px;margin-top:12px;margin-bottom:16px}
+.ist-t{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#9CA3AF;margin-bottom:8px}
+.ir{display:flex;gap:8px;padding:6px 0;font-size:12.5px;line-height:1.4;opacity:.3;transition:.2s}
+.ir.on{opacity:1;font-weight:700}
+.ir .rg{font-weight:700;min-width:42px;flex-shrink:0}
+.hero-foot{font-size:11px;color:#6B7280;margin-top:8px;line-height:1.5;font-style:italic}
+
+.warn{background:#FEF2F2;border:2px solid #FECACA;border-radius:12px;padding:12px 14px;margin-top:10px;font-size:12px;line-height:1.5;color:#991B1B;font-weight:500;display:none;gap:8px;align-items:flex-start}
+.warn svg{flex-shrink:0;margin-top:1px}
+
+.vw{display:none}.vw.on{display:block}
+
+/* Bottom nav */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:#0F172A;padding:6px 4px;padding-bottom:max(8px,env(safe-area-inset-bottom,0px));display:flex;justify-content:space-around;border-top:1px solid rgba(255,255,255,.06)}
+.bn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;cursor:pointer;flex:1;color:rgba(255,255,255,.35);text-decoration:none}
+.bn.on{color:#fff}
+.bn svg{width:22px;height:22px}
+.bn-lb{font-size:9px;font-weight:600}
+.bn-dt{width:4px;height:4px;border-radius:50%;background:#0D9488;opacity:0;margin-top:1px}
+.bn.on .bn-dt{opacity:1}
+
+.fab{position:fixed;bottom:calc(68px + max(8px,env(safe-area-inset-bottom,0px)) + 12px);right:14px;z-index:40;width:48px;height:48px;border-radius:14px;border:none;background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.fab svg{width:20px;height:20px}
+
+.toast{position:fixed;top:max(16px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%) translateY(-80px);z-index:300;background:#111827;color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:transform .4s ease;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+.mo{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center}
+.mo.open{display:flex}
+.ms{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:560px;max-height:85vh;display:flex;flex-direction:column}
+.ms-hd{width:36px;height:4px;border-radius:100px;background:#D1D5DB;margin:8px auto 0;flex-shrink:0}
+.ms-hr{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E5E7EB;flex-shrink:0}
+.ms-ti{font-size:16px;font-weight:700}
+.ms-x{width:34px;height:34px;border-radius:10px;border:none;background:#F3F4F6;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#4B5563}
+.ms-bd{padding:16px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.ms-lb{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9CA3AF;margin-bottom:8px;margin-top:12px}
+.ms-lb:first-child{margin-top:0}
+.te{background:#FAFBFC;border:1.5px solid #E5E7EB;border-radius:12px;padding:14px;margin-bottom:8px}
+.te-r{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.te-r:last-child{margin-bottom:0}
+.te-r label{font-size:10px;font-weight:600;color:#4B5563;min-width:36px}
+.te-r input[type=text],.te-r select{flex:1;font-family:inherit;font-size:13px;font-weight:500;color:#111827;border:1.5px solid #E5E7EB;border-radius:8px;padding:10px 12px;outline:none;background:#fff;min-height:44px;min-width:0}
+.te-r select{-webkit-appearance:none;appearance:none;cursor:pointer}
+.te-r input[type=number]{width:60px;flex:0 0 60px;text-align:center;font-weight:600;-moz-appearance:textfield}
+.te-r input::-webkit-outer-spin-button,.te-r input::-webkit-inner-spin-button{-webkit-appearance:none}
+.te-sep{color:#9CA3AF;font-weight:700;font-size:12px}
+.ms-ft{padding:12px 20px;padding-bottom:max(14px,env(safe-area-inset-bottom,0px));border-top:1px solid #E5E7EB;flex-shrink:0}
+.ms-sv{width:100%;padding:14px;font-family:inherit;font-size:15px;font-weight:700;border:none;border-radius:12px;background:#0D9488;color:#fff;cursor:pointer;min-height:50px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-l"><div class="hdr-mk">B</div><div class="hdr-tx">Bence<b>-10</b> Score</div></div>
+  <div class="hdr-r"><div class="hdr-nm">Dr R. Bence</div><div class="hdr-av">RB</div></div>
+</div>
+
+<div class="wrap">
+
+<!-- ════════ SURGICAL (Bence-10) ════════ -->
+<div class="vw on" id="v-surgical">
+
+<div class="sc">
+  <div class="scr"><svg viewBox="0 0 56 56"><circle class="bg2" cx="28" cy="28" r="26"/><circle class="fg2" id="r-surg" cx="28" cy="28" r="26"/></svg><div class="vl" id="v-surg">0</div></div>
+  <div class="sinf"><div class="lb">Bence-10 · 26 max</div><div class="rk" id="surg-rl" style="color:#059669">Low Risk</div></div>
+  <div class="scg" onclick="openSt('surgical')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</div>
+
+<div class="sec">Parameters <span id="surg-cnt" style="background:#F3F4F6;padding:2px 8px;border-radius:100px;font-weight:700;color:#4B5563">0 / 10</span></div>
+
+<input type="checkbox" class="tc-cb" id="s0" onchange="uSurg()">
+<label class="tc" for="s0" onclick="setTimeout(uSurg,20)"><div class="ix">1</div><div class="bd2"><div class="nm">Pneumoperitoneum</div><div class="su"><span class="cr-off">Absent</span><span class="cr-on">Present</span> · Free air on imaging · <b>5 pts</b></div></div><div class="pt">+5</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s1" onchange="uSurg()">
+<label class="tc" for="s1" onclick="setTimeout(uSurg,20)"><div class="ix">2</div><div class="bd2"><div class="nm">Peritonitis</div><div class="su"><span class="cr-off">Absent</span><span class="cr-on">Present</span> · Peritoneal irritation · <b>4 pts</b></div></div><div class="pt">+4</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s2" onchange="uSurg()">
+<label class="tc" for="s2" onclick="setTimeout(uSurg,20)"><div class="ix">3</div><div class="bd2"><div class="nm">Abdominal wall erythema</div><div class="su"><span class="cr-off">Absent</span><span class="cr-on">Present</span> · Overlying skin changes · <b>3 pts</b></div></div><div class="pt">+3</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s3" onchange="uSurg()">
+<label class="tc" for="s3" onclick="setTimeout(uSurg,20)"><div class="ix">4</div><div class="bd2"><div class="nm">CRP &gt; 10 mg/L</div><div class="su"><span class="cr-off">≤ 10 mg/L</span><span class="cr-on">&gt; 10 mg/L</span> · C-reactive protein · <b>3 pts</b></div></div><div class="pt">+3</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s4" onchange="uSurg()">
+<label class="tc" for="s4" onclick="setTimeout(uSurg,20)"><div class="ix">5</div><div class="bd2"><div class="nm">Symptoms &gt; 48 hours</div><div class="su"><span class="cr-off">≤ 48 hours</span><span class="cr-on">&gt; 48 hours</span> · Duration · <b>3 pts</b></div></div><div class="pt">+3</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s5" onchange="uSurg()">
+<label class="tc" for="s5" onclick="setTimeout(uSurg,20)"><div class="ix">6</div><div class="bd2"><div class="nm">Abdominal mass</div><div class="su"><span class="cr-off">Absent</span><span class="cr-on">Present</span> · Palpable on exam · <b>2 pts</b></div></div><div class="pt">+2</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s6" onchange="uSurg()">
+<label class="tc" for="s6" onclick="setTimeout(uSurg,20)"><div class="ix">7</div><div class="bd2"><div class="nm">WCC &lt;5 or &gt;20 ×10⁹/L</div><div class="su"><span class="cr-off">5–20</span><span class="cr-on">&lt; 5 or &gt; 20</span> · White cell count · <b>2 pts</b></div></div><div class="pt">+2</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s7" onchange="uSurg()">
+<label class="tc" for="s7" onclick="setTimeout(uSurg,20)"><div class="ix">8</div><div class="bd2"><div class="nm">Blood culture positive</div><div class="su"><span class="cr-off">Negative</span><span class="cr-on">Positive</span> · Microbiology · <b>2 pts</b></div></div><div class="pt">+2</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s8" onchange="uSurg()">
+<label class="tc" for="s8" onclick="setTimeout(uSurg,20)"><div class="ix">9</div><div class="bd2"><div class="nm">Haemoglobin &lt; 10 g/dL</div><div class="su"><span class="cr-off">≥ 10</span><span class="cr-on">&lt; 10 g/dL</span> · Anaemia · <b>1 pt</b></div></div><div class="pt">+1</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="s9" onchange="uSurg()">
+<label class="tc" for="s9" onclick="setTimeout(uSurg,20)"><div class="ix">10</div><div class="bd2"><div class="nm">Albumin &lt; 25 g/L</div><div class="su"><span class="cr-off">≥ 25</span><span class="cr-on">&lt; 25 g/L</span> · Nutrition · <b>1 pt</b></div></div><div class="pt">+1</div><div class="sw"></div></label>
+
+<div class="ist" id="surg-interp">
+  <div class="ist-t">Risk Stratification*</div>
+  <div class="ir on" id="si0"><span class="rg" style="color:#10B981">&lt; 10</span><span>Low risk — close monitoring, likely to respond to conservative management</span></div>
+  <div class="ir" id="si1"><span class="rg" style="color:#EF4444">≥ 10</span><span>High risk — strong probability of operative intervention</span></div>
+  <div class="hero-foot">*Presence of pneumoperitoneum alone should be considered a high-risk feature irrespective of total score.</div>
+</div>
+<div class="warn" id="surg-warn">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <span><b>Pneumoperitoneum present</b> — consider high-risk irrespective of total score.</span>
+</div>
+</div>
+
+<!-- ════════ qSOFA ════════ -->
+<div class="vw" id="v-sepsis">
+<div class="sc">
+  <div class="scr"><svg viewBox="0 0 56 56"><circle class="bg2" cx="28" cy="28" r="26"/><circle class="fg2" id="r-sep" cx="28" cy="28" r="26"/></svg><div class="vl" id="v-sep">0</div></div>
+  <div class="sinf"><div class="lb">qSOFA · 3 max</div><div class="rk" id="sep-rl" style="color:#059669">Low Risk</div></div>
+  <div class="scg" onclick="openSt('sepsis')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</div>
+<div class="sec">Criteria <span id="sep-cnt" style="background:#F3F4F6;padding:2px 8px;border-radius:100px;font-weight:700;color:#4B5563">0 / 3</span></div>
+
+<input type="checkbox" class="tc-cb" id="q0" onchange="uSep()">
+<label class="tc" for="q0" onclick="setTimeout(uSep,20)"><div class="ix">1</div><div class="bd2"><div class="nm">Resp rate ≥ 22/min</div><div class="su"><span class="cr-off">&lt; 22/min</span><span class="cr-on">≥ 22/min</span> · Tachypnoea · <b>1 pt</b></div></div><div class="pt">+1</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="q1" onchange="uSep()">
+<label class="tc" for="q1" onclick="setTimeout(uSep,20)"><div class="ix">2</div><div class="bd2"><div class="nm">Altered mentation</div><div class="su"><span class="cr-off">GCS = 15</span><span class="cr-on">GCS &lt; 15</span> · <b>1 pt</b></div></div><div class="pt">+1</div><div class="sw"></div></label>
+
+<input type="checkbox" class="tc-cb" id="q2" onchange="uSep()">
+<label class="tc" for="q2" onclick="setTimeout(uSep,20)"><div class="ix">3</div><div class="bd2"><div class="nm">Systolic BP ≤ 100 mmHg</div><div class="su"><span class="cr-off">&gt; 100</span><span class="cr-on">≤ 100</span> · Hypotension · <b>1 pt</b></div></div><div class="pt">+1</div><div class="sw"></div></label>
+
+<div class="ist">
+  <div class="ist-t">Interpretation</div>
+  <div class="ir on" id="qi0"><span class="rg" style="color:#10B981">0–1</span><span>Low risk — monitor, reassess if deterioration</span></div>
+  <div class="ir" id="qi1"><span class="rg" style="color:#EF4444">2–3</span><span>High risk — investigate organ dysfunction, consider ICU</span></div>
+</div>
+</div>
+
+<!-- ════════ APACHE II ════════ -->
+<div class="vw" id="v-apache">
+<div class="sc">
+  <div class="scr"><svg viewBox="0 0 56 56"><circle class="bg2" cx="28" cy="28" r="26"/><circle class="fg2" id="r-ap" cx="28" cy="28" r="26"/></svg><div class="vl" id="v-ap">0</div></div>
+  <div class="sinf"><div class="lb">APACHE II · 71 max</div><div class="rk" id="ap-rl" style="color:#059669">Low</div></div>
+  <div class="scg" onclick="openSt('apache')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</div>
+<div class="sec">Physiologic Parameters</div>
+
+<div class="sk"><div class="sk-top"><div class="sk-ix">1</div><div class="sk-nm">Temperature (°C)</div><div class="sk-pt" id="ap0">0</div></div><div class="sk-sub">Core / rectal</div><select onchange="uAp()"><option value="0">36–38.4 (normal)</option><option value="1">38.5–38.9</option><option value="1">34–35.9</option><option value="3">39–40.9</option><option value="2">32–33.9</option><option value="4">≥ 41</option><option value="4">≤ 29.9</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">2</div><div class="sk-nm">MAP (mmHg)</div><div class="sk-pt" id="ap1">0</div></div><select onchange="uAp()"><option value="0">70–109 (normal)</option><option value="2">110–129</option><option value="2">50–69</option><option value="3">130–159</option><option value="4">≥ 160</option><option value="4">≤ 49</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">3</div><div class="sk-nm">Heart Rate</div><div class="sk-pt" id="ap2">0</div></div><select onchange="uAp()"><option value="0">70–109 (normal)</option><option value="2">110–139</option><option value="2">55–69</option><option value="3">140–179</option><option value="2">40–54</option><option value="4">≥ 180</option><option value="4">≤ 39</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">4</div><div class="sk-nm">Resp Rate</div><div class="sk-pt" id="ap3">0</div></div><select onchange="uAp()"><option value="0">12–24 (normal)</option><option value="1">25–34</option><option value="1">10–11</option><option value="3">35–49</option><option value="2">6–9</option><option value="4">≥ 50</option><option value="4">≤ 5</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">5</div><div class="sk-nm">Oxygenation</div><div class="sk-pt" id="ap4">0</div></div><div class="sk-sub">A-a gradient or PaO₂</div><select onchange="uAp()"><option value="0">PaO₂ >70 / A-a &lt;200</option><option value="1">PaO₂ 61–70</option><option value="2">A-a 200–349</option><option value="3">PaO₂ 55–60</option><option value="3">A-a 350–499</option><option value="4">A-a ≥ 500</option><option value="4">PaO₂ &lt; 55</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">6</div><div class="sk-nm">Arterial pH</div><div class="sk-pt" id="ap5">0</div></div><select onchange="uAp()"><option value="0">7.33–7.49</option><option value="1">7.50–7.59</option><option value="2">7.25–7.32</option><option value="3">7.60–7.69</option><option value="3">7.15–7.24</option><option value="4">≥ 7.70</option><option value="4">&lt; 7.15</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">7</div><div class="sk-nm">Sodium (mEq/L)</div><div class="sk-pt" id="ap6">0</div></div><select onchange="uAp()"><option value="0">130–149</option><option value="1">150–154</option><option value="2">120–129</option><option value="2">155–159</option><option value="3">111–119</option><option value="4">≥ 180</option><option value="4">≤ 110</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">8</div><div class="sk-nm">Potassium (mEq/L)</div><div class="sk-pt" id="ap7">0</div></div><select onchange="uAp()"><option value="0">3.5–5.4</option><option value="1">5.5–5.9</option><option value="1">3.0–3.4</option><option value="3">6.0–6.9</option><option value="2">2.5–2.9</option><option value="4">≥ 7.0</option><option value="4">&lt; 2.5</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">9</div><div class="sk-nm">Creatinine (mg/dL)</div><div class="sk-pt" id="ap8">0</div></div><div class="sk-sub">Double for ARF</div><select onchange="uAp()"><option value="0">0.6–1.4</option><option value="2">1.5–1.9</option><option value="2">&lt; 0.6</option><option value="3">2.0–3.4</option><option value="4">≥ 3.5</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">10</div><div class="sk-nm">Haematocrit (%)</div><div class="sk-pt" id="ap9">0</div></div><select onchange="uAp()"><option value="0">30–45.9</option><option value="1">46–49.9</option><option value="2">20–29.9</option><option value="2">50–59.9</option><option value="4">≥ 60</option><option value="4">&lt; 20</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">11</div><div class="sk-nm">WCC (×10⁹/L)</div><div class="sk-pt" id="ap10">0</div></div><select onchange="uAp()"><option value="0">3–14.9</option><option value="1">15–19.9</option><option value="2">1–2.9</option><option value="2">20–39.9</option><option value="4">≥ 40</option><option value="4">&lt; 1</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">12</div><div class="sk-nm">GCS</div><div class="sk-pt" id="ap11">0</div></div><div class="sk-sub">Score = 15 − GCS</div><select onchange="uAp()"><option value="0">GCS 15</option><option value="2">GCS 13–14</option><option value="5">GCS 10–12</option><option value="8">GCS 7–9</option><option value="12">GCS 3–6</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">13</div><div class="sk-nm">Age (years)</div><div class="sk-pt" id="ap12">0</div></div><select onchange="uAp()"><option value="0">&lt; 45</option><option value="2">45–54</option><option value="3">55–64</option><option value="5">65–74</option><option value="6">≥ 75</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">14</div><div class="sk-nm">Chronic Health</div><div class="sk-pt" id="ap13">0</div></div><div class="sk-sub">Organ failure / immunocompromised</div><select onchange="uAp()"><option value="0">None</option><option value="5">Non-op / emerg post-op</option><option value="2">Elective post-op</option></select></div>
+
+<div class="ist"><div class="ist-t">Estimated Mortality</div>
+<div class="ir on" id="ai0"><span class="rg" style="color:#10B981">0–9</span><span>~8% mortality</span></div>
+<div class="ir" id="ai1"><span class="rg" style="color:#10B981">10–14</span><span>~15% mortality</span></div>
+<div class="ir" id="ai2"><span class="rg" style="color:#F59E0B">15–19</span><span>~25% mortality</span></div>
+<div class="ir" id="ai3"><span class="rg" style="color:#F59E0B">20–24</span><span>~40% mortality</span></div>
+<div class="ir" id="ai4"><span class="rg" style="color:#EF4444">25–29</span><span>~55% mortality</span></div>
+<div class="ir" id="ai5"><span class="rg" style="color:#EF4444">30–34</span><span>~75% mortality</span></div>
+<div class="ir" id="ai6"><span class="rg" style="color:#EF4444">≥ 35</span><span>~85% mortality</span></div>
+</div>
+</div>
+
+<!-- ════════ NEWS2 ════════ -->
+<div class="vw" id="v-news">
+<div class="sc">
+  <div class="scr"><svg viewBox="0 0 56 56"><circle class="bg2" cx="28" cy="28" r="26"/><circle class="fg2" id="r-nw" cx="28" cy="28" r="26"/></svg><div class="vl" id="v-nw">0</div></div>
+  <div class="sinf"><div class="lb">NEWS2 · 20 max</div><div class="rk" id="nw-rl" style="color:#059669">Low</div></div>
+  <div class="scg" onclick="openSt('news')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+</div>
+<div class="sec">Observations</div>
+
+<div class="sk"><div class="sk-top"><div class="sk-ix">1</div><div class="sk-nm">Resp Rate (/min)</div><div class="sk-pt" id="nw0">0</div></div><select onchange="uNw()"><option value="0">12–20 (normal)</option><option value="2">21–24</option><option value="1">9–11</option><option value="3">≥ 25</option><option value="3">≤ 8</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">2</div><div class="sk-nm">SpO₂ Scale 1 (%)</div><div class="sk-pt" id="nw1">0</div></div><div class="sk-sub">Standard</div><select onchange="uNw()"><option value="0">≥ 96</option><option value="1">94–95</option><option value="2">92–93</option><option value="3">≤ 91</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">3</div><div class="sk-nm">SpO₂ Scale 2 (%)</div><div class="sk-pt" id="nw2">0</div></div><div class="sk-sub">Hypercapnic</div><select onchange="uNw()"><option value="0">88–92 air / 93–94 O₂</option><option value="1">93 air / 95–96 O₂</option><option value="2">86–87</option><option value="3">≥ 97 on O₂</option><option value="3">≤ 85</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">4</div><div class="sk-nm">Air or Oxygen</div><div class="sk-pt" id="nw3">0</div></div><select onchange="uNw()"><option value="0">Room air</option><option value="2">Supplemental O₂</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">5</div><div class="sk-nm">Systolic BP (mmHg)</div><div class="sk-pt" id="nw4">0</div></div><select onchange="uNw()"><option value="0">111–219</option><option value="1">101–110</option><option value="2">91–100</option><option value="3">≤ 90</option><option value="3">≥ 220</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">6</div><div class="sk-nm">Pulse (/min)</div><div class="sk-pt" id="nw5">0</div></div><select onchange="uNw()"><option value="0">51–90</option><option value="1">91–110</option><option value="1">41–50</option><option value="2">111–130</option><option value="3">≥ 131</option><option value="3">≤ 40</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">7</div><div class="sk-nm">Consciousness</div><div class="sk-pt" id="nw6">0</div></div><div class="sk-sub">ACVPU</div><select onchange="uNw()"><option value="0">Alert</option><option value="3">Confusion (new)</option><option value="3">Voice</option><option value="3">Pain</option><option value="3">Unresponsive</option></select></div>
+<div class="sk"><div class="sk-top"><div class="sk-ix">8</div><div class="sk-nm">Temperature (°C)</div><div class="sk-pt" id="nw7">0</div></div><select onchange="uNw()"><option value="0">36.1–38</option><option value="1">35.1–36</option><option value="1">38.1–39</option><option value="2">≥ 39.1</option><option value="3">≤ 35</option></select></div>
+
+<div class="ist"><div class="ist-t">Clinical Response</div>
+<div class="ir on" id="ni0"><span class="rg" style="color:#10B981">0</span><span>Routine — min 12-hourly obs</span></div>
+<div class="ir" id="ni1"><span class="rg" style="color:#10B981">1–4</span><span>Low — assess by competent RN</span></div>
+<div class="ir" id="ni2"><span class="rg" style="color:#F59E0B">5–6</span><span>Medium — urgent response, hourly</span></div>
+<div class="ir" id="ni3"><span class="rg" style="color:#EF4444">≥ 7</span><span>High — emergency, continuous, ICU</span></div>
+</div>
+</div>
+
+</div><!-- /wrap -->
+
+<button class="fab" onclick="resetCur()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg></button>
+
+<nav class="bnav">
+  <div class="bn on" onclick="go('surgical',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-3"/><path d="M9 15h3l8.5-8.5a2.121 2.121 0 0 0-3-3L9 12v3"/></svg><span class="bn-lb">Bence-10</span><div class="bn-dt"></div></div>
+  <div class="bn" onclick="go('sepsis',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="bn-lb">qSOFA</span><div class="bn-dt"></div></div>
+  <div class="bn" onclick="go('apache',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span class="bn-lb">APACHE</span><div class="bn-dt"></div></div>
+  <div class="bn" onclick="go('news',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="bn-lb">NEWS2</span><div class="bn-dt"></div></div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="mo" id="mo" onclick="if(event.target===this)closeSt()">
+  <div class="ms"><div class="ms-hd"></div>
+    <div class="ms-hr"><div class="ms-ti" id="msTi">Settings</div><button class="ms-x" onclick="closeSt()">&#10005;</button></div>
+    <div class="ms-bd" id="msBd"></div>
+    <div class="ms-ft"><button class="ms-sv" onclick="saveSt()">Save Changes</button></div>
+  </div>
+</div>
+
+<script>
+var C=2*Math.PI*26,cur='surgical';
+var SP=[5,4,3,3,3,2,2,2,1,1];
+
+var RC={
+  surgical:{max:26,tiers:[{label:'Low Risk',desc:'Close monitoring, likely to respond to conservative management',min:0,max:9,color:'g'},{label:'High Risk',desc:'Strong probability of operative intervention',min:10,max:26,color:'r'}]},
+  sepsis:{max:3,tiers:[{label:'Low Risk',desc:'Monitor clinically, reassess if deterioration',min:0,max:1,color:'g'},{label:'High Risk',desc:'Investigate organ dysfunction, consider ICU',min:2,max:3,color:'r'}]},
+  apache:{max:71,tiers:[{label:'Low',desc:'~8% mortality',min:0,max:9,color:'g'},{label:'Low-Mod',desc:'~15% mortality',min:10,max:14,color:'g'},{label:'Moderate',desc:'~25% mortality',min:15,max:19,color:'o'},{label:'Mod-High',desc:'~40% mortality',min:20,max:24,color:'o'},{label:'High',desc:'~55% mortality',min:25,max:29,color:'r'},{label:'Very High',desc:'~75% mortality',min:30,max:34,color:'r'},{label:'Critical',desc:'~85% mortality',min:35,max:71,color:'r'}]},
+  news:{max:20,tiers:[{label:'Low',desc:'Routine min 12-hourly obs',min:0,max:0,color:'g'},{label:'Low',desc:'Assess by competent RN',min:1,max:4,color:'g'},{label:'Medium',desc:'Urgent response hourly',min:5,max:6,color:'o'},{label:'High',desc:'Emergency continuous ICU',min:7,max:20,color:'r'}]}
+};
+
+var CC={g:['#10B981','#059669'],o:['#F59E0B','#D97706'],r:['#EF4444','#DC2626']};
+
+function tier(c,s){var t=RC[c].tiers;for(var i=t.length-1;i>=0;i--)if(s>=t[i].min)return{i:i,t:t[i]};return{i:0,t:t[0]};}
+
+function setRing(rId,vId,rlId,c,s){
+  document.getElementById(vId).textContent=s;
+  var fg=document.getElementById(rId);
+  fg.style.strokeDashoffset=C-(Math.min(s,RC[c].max)/RC[c].max)*C;
+  var r=tier(c,s);
+  fg.style.stroke=CC[r.t.color][0];
+  var el=document.getElementById(rlId);
+  el.style.color=CC[r.t.color][1];el.textContent=r.t.label;
+}
+
+/* Surgical — reads native checkboxes */
+function uSurg(){
+  var t=0,a=0,pneumo=false;
+  for(var i=0;i<10;i++){
+    if(document.getElementById('s'+i).checked){t+=SP[i];a++;if(i===0)pneumo=true;}
+  }
+  document.getElementById('surg-cnt').textContent=a+' / 10';
+  setRing('r-surg','v-surg','surg-rl','surgical',t);
+  var w=document.getElementById('surg-warn');
+  if(pneumo&&t<10){w.style.display='flex';document.getElementById('surg-rl').style.color='#DC2626';document.getElementById('surg-rl').textContent='High Risk*';document.getElementById('r-surg').style.stroke='#EF4444';}else{w.style.display='none';}
+  document.getElementById('si0').className=(t<10&&!pneumo)?'ir on':'ir';
+  document.getElementById('si1').className=(t>=10||pneumo)?'ir on':'ir';
+}
+
+/* qSOFA */
+function uSep(){
+  var t=0,a=0;
+  for(var i=0;i<3;i++){if(document.getElementById('q'+i).checked){t++;a++;}}
+  document.getElementById('sep-cnt').textContent=a+' / 3';
+  setRing('r-sep','v-sep','sep-rl','sepsis',t);
+  document.getElementById('qi0').className=t<2?'ir on':'ir';
+  document.getElementById('qi1').className=t>=2?'ir on':'ir';
+}
+
+/* APACHE */
+function uAp(){
+  var sels=document.querySelectorAll('#v-apache select'),t=0;
+  for(var i=0;i<sels.length;i++){var v=parseInt(sels[i].options[sels[i].selectedIndex].value);t+=v;var b=document.getElementById('ap'+i);b.textContent=v>0?'+'+v:'0';b.className=v>0?'sk-pt on':'sk-pt';}
+  setRing('r-ap','v-ap','ap-rl','apache',t);
+  var idx=t<=9?0:t<=14?1:t<=19?2:t<=24?3:t<=29?4:t<=34?5:6;
+  for(var j=0;j<7;j++)document.getElementById('ai'+j).className=j===idx?'ir on':'ir';
+}
+
+/* NEWS2 */
+function uNw(){
+  var sels=document.querySelectorAll('#v-news select'),t=0;
+  for(var i=0;i<sels.length;i++){var v=parseInt(sels[i].options[sels[i].selectedIndex].value);t+=v;var b=document.getElementById('nw'+i);b.textContent=v>0?'+'+v:'0';b.className=v>0?'sk-pt on':'sk-pt';}
+  setRing('r-nw','v-nw','nw-rl','news',t);
+  var idx=t===0?0:t<=4?1:t<=6?2:3;
+  for(var j=0;j<4;j++)document.getElementById('ni'+j).className=j===idx?'ir on':'ir';
+}
+
+/* Nav */
+function go(v,el){
+  if(v===cur)return;cur=v;
+  var vws=document.querySelectorAll('.vw');for(var i=0;i<vws.length;i++)vws[i].className='vw';
+  document.getElementById('v-'+v).className='vw on';
+  var bns=document.querySelectorAll('.bn');for(var i=0;i<bns.length;i++)bns[i].className='bn';
+  el.className='bn on';
+  window.scrollTo(0,0);
+}
+
+/* Reset */
+function resetCur(){
+  if(cur==='surgical'){for(var i=0;i<10;i++)document.getElementById('s'+i).checked=false;uSurg();}
+  else if(cur==='sepsis'){for(var i=0;i<3;i++)document.getElementById('q'+i).checked=false;uSep();}
+  else if(cur==='apache'){var s=document.querySelectorAll('#v-apache select');for(var i=0;i<s.length;i++){s[i].selectedIndex=0;var b=document.getElementById('ap'+i);b.textContent='0';b.className='sk-pt';}uAp();}
+  else{var s=document.querySelectorAll('#v-news select');for(var i=0;i<s.length;i++){s[i].selectedIndex=0;var b=document.getElementById('nw'+i);b.textContent='0';b.className='sk-pt';}uNw();}
+  toast('Reset');
+}
+
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2000);}
+
+/* Settings */
+var sC=null;
+function openSt(c){
+  sC=c;var nm={surgical:'Bence-10',sepsis:'qSOFA',apache:'APACHE II',news:'NEWS2'};
+  document.getElementById('msTi').textContent=nm[c]+' — Risk Tiers';
+  var cfg=RC[c],h='<div class="ms-lb">Edit tier labels, score ranges, descriptions and colours.</div>';
+  for(var i=0;i<cfg.tiers.length;i++){var t=cfg.tiers[i];
+    h+='<div class="te"><div class="te-r"><label>Label</label><input type="text" id="el'+i+'" value="'+t.label+'"></div>';
+    h+='<div class="te-r"><label>Min</label><input type="number" id="emin'+i+'" value="'+t.min+'" min="0"><span class="te-sep">to</span><label>Max</label><input type="number" id="emax'+i+'" value="'+t.max+'" min="0"></div>';
+    h+='<div class="te-r"><label>Desc</label><input type="text" id="ed'+i+'" value="'+t.desc+'"></div>';
+    h+='<div class="te-r"><label>Color</label><select id="ec'+i+'"><option value="g"'+(t.color==='g'?' selected':'')+'>🟢 Green</option><option value="o"'+(t.color==='o'?' selected':'')+'>🟡 Orange</option><option value="r"'+(t.color==='r'?' selected':'')+'>🔴 Red</option></select></div></div>';
+  }
+  document.getElementById('msBd').innerHTML=h;
+  document.getElementById('mo').classList.add('open');
+}
+function closeSt(){document.getElementById('mo').classList.remove('open');sC=null;}
+function saveSt(){
+  var cfg=RC[sC];
+  for(var i=0;i<cfg.tiers.length;i++){
+    cfg.tiers[i].label=document.getElementById('el'+i).value;
+    cfg.tiers[i].min=parseInt(document.getElementById('emin'+i).value)||0;
+    cfg.tiers[i].max=parseInt(document.getElementById('emax'+i).value)||0;
+    cfg.tiers[i].desc=document.getElementById('ed'+i).value;
+    cfg.tiers[i].color=document.getElementById('ec'+i).value;
+  }
+  cfg.tiers.sort(function(a,b){return a.min-b.min;});
+  if(sC==='surgical')uSurg();else if(sC==='sepsis')uSep();else if(sC==='apache')uAp();else uNw();
+  closeSt();toast('Tiers updated ✓');
+}
+
+/* ─── BULLETPROOF POLLING ─── */
+/* WhatsApp/iOS WebView blocks inline event handlers (onclick, onchange).
+   Instead, poll checkbox & select states every 300ms. Zero event handlers needed. */
+var prevState='';
+function poll(){
+  var s='';
+  for(var i=0;i<10;i++) s+=document.getElementById('s'+i).checked?'1':'0';
+  for(var i=0;i<3;i++) s+=document.getElementById('q'+i).checked?'1':'0';
+  var asels=document.querySelectorAll('#v-apache select');
+  for(var i=0;i<asels.length;i++) s+=asels[i].selectedIndex;
+  var nsels=document.querySelectorAll('#v-news select');
+  for(var i=0;i<nsels.length;i++) s+=nsels[i].selectedIndex;
+  if(s!==prevState){
+    prevState=s;
+    uSurg();uSep();uAp();uNw();
+  }
+}
+setInterval(poll,300);
+</script>
+</body>
+</html>
